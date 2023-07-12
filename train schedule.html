@@ -1,0 +1,55 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const TrainSchedule = () => {
+  const [trainData, setTrainData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTrainData = async () => {
+      try {
+        const response = await axios.get('YOUR_API_ENDPOINT');
+        setTrainData(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        setError('Error retrieving train schedule.');
+        setIsLoading(false);
+      }
+    };
+
+    fetchTrainData();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  return (
+    <div>
+      <h1>Train Schedule</h1>
+      <ul>
+        {trainData.map((train) => (
+          <TrainItem key={train.id} train={train} />
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+const TrainItem = ({ train }) => {
+  return (
+    <li>
+      <div>Train Number: {train.number}</div>
+      <div>Departure Time: {train.departureTime}</div>
+      <div>Arrival Time: {train.arrivalTime}</div>
+      {/* Additional train details */}
+    </li>
+  );
+};
+
+export default TrainSchedule;
